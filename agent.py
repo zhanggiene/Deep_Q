@@ -1,7 +1,6 @@
 
 import tensorflow as tf      # Deep Learning library
 import numpy as np           # Handle matrices
-import retro                 # Retro Environment
 
 
 from skimage import transform # Help us to preprocess the frames

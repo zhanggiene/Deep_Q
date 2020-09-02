@@ -28,12 +28,12 @@ from collections import deque# Ordered collection with ends
 
 class Game:
     #game maintain the stacked 4 states
-    def __init__(self):
-        self.config=Config()
+    def __init__(self,config):
+        self.config=config
         #self.env = retro.make(game='SpaceInvaders-Atari2600')
         self.env=gym.make('Breakout-v0')
         #print("possible action")
-        print(self.env.action_space.n)
+        self.config.setNumberOfActions(self.env.action_space.n)
         self.stacked_states_Q  =  deque([np.zeros((self.config.state_size[0:2]), dtype=np.int) for i in range(self.config.stack_size)], maxlen=4)
         #self.stacked_frames is 4 for now
         self.possible_actions = np.array(np.identity(self.env.action_space.n,dtype=int).tolist())

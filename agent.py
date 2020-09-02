@@ -58,13 +58,20 @@ class Agent:
         return action_index
     def exploreLess(self):
         self.decayStep+=1
-        self.epsilon = max(self.config.explore_stop, self.epsilon * np.exp(-self.config.decay_rate*self.decayStep))
+        #this method decay too fast,not gradient is not slowingdown
+        # self.epsilon = max(self.config.explore_stop, self.epsilon * np.exp(-self.config.decay_rate*self.decayStep))
+        self.epsilon=self.config.explore_stop+(self.config.explore_start-self.config.explore_stop)*np.exp(-self.config.decay_rate*self.decayStep)
     def remember(self,experience):
         self.memory.add(experience)
         #print("inside remember function",experience[0].shape)
 
 
     def replay(self):
+        #replay means learn, it will decrease episolon also. 
+
+
+
+
         targets = np.zeros((self.config.batch_size, self.config.action_size))
         batch=self.memory.sample(self.config.batch_size)
         #print("batch size is ",batch[0][0].shape)
@@ -97,4 +104,6 @@ class Agent:
         return self.brain.predict(stackOfImage)
     def saveModel(self,name):
         self.brain.save(self.config.checkpoints+'/'+name+'.ckpt')
+    def getEpsilon(self):
+        return self.epsilon
     

@@ -12,6 +12,7 @@ from collections import deque# Ordered collection with ends
 import random
 from agent import Agent
 from game import Game
+import matplotlib.pyplot as pyplot
 
 
 
@@ -20,9 +21,33 @@ from config import Config
 
 config=Config()
 boy=Agent()
-challengGame=Game()
+challengGame=Game(config)
+
+score=[]
+eps_history=[]
 
 
+#game need config for initialization Game(Config)
+#game sets config during initialization
+
+def plot_learning_curve(x,score,epsilon,path):
+    fig=plt.figure()
+    ax=fig.add_subplot(111,label="1")
+    ax2=fig.add_subplot(111,label='2',frame_on=False)
+    ax.plot(x,epsilon,color='C0')
+    ax.set_xlabel("training Steps",color='C0')
+    ax.set_ylabel("Epsilon",color='C0')
+    ax.tick_params(axis='x',colors='C0')
+    ax.tick_params(axis='y',colors='C0')
+
+    ax2.scatter(x,score,color='C1')
+    ax2.axes.get_xaxis().set_visible(False)
+    ax2.yaxis.tick_right()
+    ax2.set_ylabel('score',color="C1")
+    ax2.yaxis.set_label_position('right')
+    ax2.tick_params(axis='y',color='C1')
+    plt.savefig(path+"/progress.png")
+#plot_learning_curve([1,2,3],[5,6,7],[0.1,0.2,0.3],".")
 
 for episode in range(config.total_episodes):
     # Set step to 0
@@ -64,9 +89,10 @@ for episode in range(config.total_episodes):
         boy.replay()
     print("episode number is ",episode)
     print("total reward is",total_rewards)
-    if episode%2==0:
+    score.append(total_rewards)
+    eps_history.append(boy.getEpsilon)
+    if episode%1000==0:
         print("saving model")
         boy.saveModel(str(episode))
-
-
+x=[i+1 for i in range(config.total_episodes)]
 

@@ -15,12 +15,12 @@ from keras import backend as K
 
 class MModel():
     def __init__(self,numActions,img_rows,img_cols,img_channels):
-            
+  
         print("Now we build the model")
         model = Sequential()  # sequential model 
         # filter=32,kernel size is 8*8 
         model.add(Conv2D(16, (8, 8), strides=(4, 4), padding='same',input_shape=(img_cols,img_rows,img_channels))) 
-         #It's the case of the 2D convolutional layers, which need (size1,size2,channels)
+        #It's the case of the 2D convolutional layers, which need (size1,size2,channels)
         model.add(Activation('relu'))
         model.add(Conv2D(32, (4, 4), strides=(2, 2), padding='same'))
         model.add(Activation('relu'))

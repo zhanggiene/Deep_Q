@@ -22,8 +22,8 @@ from collections import deque# Ordered collection with ends
 from Model import MModel
 
 class Agent:
-    def __init__(self):
-        self.config=Config()
+    def __init__(self,config):
+        self.config=config
         self.epsilon=self.config.explore_start
         print("start of epsilon is ",self.epsilon)
         self.brain=MModel(self.config.action_size,self.config.state_size[0],self.config.state_size[1],self.config.state_size[2])
@@ -35,7 +35,6 @@ class Agent:
 
     def act(self,StackOfImage):
         #input is 88,84,4 
-        self.exploreLess()
         #input is the stack of images (1,84,84,4)    So input data has a shape of (batch_size, height, width, depth), 
         # it will return numpy , then 
         #choose action to take based on episolon greedy, 
@@ -68,6 +67,7 @@ class Agent:
 
     def replay(self):
         #replay means learn, it will decrease episolon also. 
+        self.exploreLess()
 
 
 

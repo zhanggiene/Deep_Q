@@ -20,8 +20,8 @@ import matplotlib.pyplot as pyplot
 from config import Config
 
 config=Config()
-boy=Agent()
-challengGame=Game(config)
+challengGame=Game(config) # u need to figure the confg in game. 
+boy=Agent(config)
 
 score=[]
 eps_history=[]
@@ -48,51 +48,52 @@ def plot_learning_curve(x,score,epsilon,path):
     ax2.tick_params(axis='y',color='C1')
     plt.savefig(path+"/progress.png")
 #plot_learning_curve([1,2,3],[5,6,7],[0.1,0.2,0.3],".")
+with tf.device('/cpu:0'):
+    for episode in range(config.total_episodes):
 
-for episode in range(config.total_episodes):
-    # Set step to 0
-    step = 0
-    
-    # Initialize the rewards of the episode
-    total_rewards =0  #episode reward should be managed by training
-    
-    # Make a new episode and observe the first state
-    challengGame.populateEmptyMemory(boy.memory)
-    
-    # Remember that stack frame function also call our preprocess function.
-    #state, stacked_frames = stack_frames(stacked_frames, state, True)
-    state=challengGame.reset()
-    #print(state.shape)
-    while step < config.max_steps:
-        step += 1
-        action=boy.act(state)
-        next_state,reward,done=challengGame.nextState(action)
+        # Set step to 0
+        step = 0
         
-        if config.episode_render:
-            challengGame.render()
+        # Initialize the rewards of the episode
+        total_rewards =0  #episode reward should be managed by training
         
-        # Add the reward to total reward
-        print
-        total_rewards+=reward
-        if done:
-            #print("games ending now")
-            next_state=challengGame.end()
-            #print(next_state.shape)
-            step=config.max_steps # to end the while loop
-            #print("episode"+episode+"total reward is "+total_rewards)
+        # Make a new episode and observe the first state
+        challengGame.populateEmptyMemory(boy.memory)
+        
+        # Remember that stack frame function also call our preprocess function.
+        #state, stacked_frames = stack_frames(stacked_frames, state, True)
+        state=challengGame.reset()
+        #print(state.shape)
+        while step < config.max_steps:
+            step += 1
+            action=boy.act(state)
+            next_state,reward,done=challengGame.nextState(action)
+            
+            if config.episode_render:
+                challengGame.render()
+            
+            # Add the reward to total reward
+            print
+            total_rewards+=reward
+            if done:
+                #print("games ending now")
+                next_state=challengGame.end()
+                #print(next_state.shape)
+                step=config.max_steps # to end the while loop
+                #print("episode"+episode+"total reward is "+total_rewards)
 
-            boy.remember((state,action,reward,next_state,done))
-        else:
-            #print("the remember shape is")
-            boy.remember((state,action,reward,next_state,done))
-            state=next_state
-        boy.replay()
-    print("episode number is ",episode)
-    print("total reward is",total_rewards)
-    score.append(total_rewards)
-    eps_history.append(boy.getEpsilon)
-    if episode%1000==0:
-        print("saving model")
-        boy.saveModel(str(episode))
+                boy.remember((state,action,reward,next_state,done))
+            else:
+                #print("the remember shape is")
+                boy.remember((state,action,reward,next_state,done))
+                state=next_state
+            boy.replay()
+        print("episode number is ",episode)
+        print("total reward is",total_rewards)
+        score.append(total_rewards)
+        eps_history.append(boy.getEpsilon)
+        if episode%1000==0:
+            print("saving model")
+            boy.saveModel(str(episode))
 x=[i+1 for i in range(config.total_episodes)]
 
